@@ -1,43 +1,45 @@
 @layout.app()
-<div class="py-2 fixed top-0 left-0 z-10 w-full">
-  <form class="max-w-[200px] m-auto" method="GET" action="/">
-    <label class="input input-bordered flex items-center gap-2">
-      <input name="q" type="text" class="grow" placeholder="Buscar...">
-      <button class="btn btn-ghost btn-circle" type="submit">
-        <iconify-icon icon="ph:magnifying-glass" height="25"></iconify-icon>
-      </button>
-    </label>
-  </form>
-</div>
-
-<div class="gap-3 grid grid-cols-2 md:grid-cols-4 mb-10">
-  @each(episode in episodes.hits)
-  <div class="card card-bordered card-compact w-full shadow-xl hover:shadow-2xl">
-    <figure class="border-b">
-      <img src="{{ episode.document.image }}" />
-    </figure>
-    <div class="card-body bg-white rounded-b-xl">
-      <h3 class="card-title line-clamp-2 text-ellipsis">
-        {{ episode.document.title }}
-      </h3>
-
-      <p>
-        {{ humanDate(episode.document.publishedAt) }}
-      </p>
-
-      <p></p>
-
-      {{--  @if(episode.highlight?.transcription)
-      <p>
-        {{{ episode.highlight?.transcription.snippet }}}
-      </p>
-      @end  --}}
-
-      {{--  <p class="text-ellipsis line-clamp-3">
-        {{{ markdown(episode.document.summary) }}}
-      </p>  --}}
-    </div>
+  <div class="py-2 fixed top-0 left-0 z-10 w-full">
+    <form class="max-w-[200px] m-auto" method="GET" action="/">
+      <label class="input input-bordered flex items-center gap-2">
+        <input name="q" type="text" class="grow" placeholder="Buscar..." />
+        <button class="btn btn-ghost btn-circle" type="submit">
+          <iconify-icon icon="ph:magnifying-glass" height="25">
+          </iconify-icon>
+        </button>
+      </label>
+    </form>
   </div>
-  @end
-</div>
+
+  <div class="gap-3 grid grid-cols-2 md:grid-cols-4 mb-10">
+    @each(episode in episodes.hits)
+      <div class="card card-bordered card-compact w-full shadow-xl hover:shadow-2xl">
+        <figure class="border-b">
+          <img src="{{ episode.document.image }}" />
+        </figure>
+        <div class="card-body bg-white rounded-b-xl">
+          <h3 class="card-title line-clamp-2 text-ellipsis">
+            {{ episode.document.title }}
+          </h3>
+
+          <p>
+            {{ humanDate(episode.document.publishedAt) }}
+          </p>
+
+          <p>
+          </p>
+
+          {{--  @if(episode.highlight?.transcription)
+          <p>
+          {{{ episode.highlight?.transcription.snippet }}}
+          </p>
+          @end  --}}
+
+          {{--  <p class="text-ellipsis line-clamp-3">
+          {{{ markdown(episode.document.summary) }}}
+          </p>  --}}
+        </div>
+      </div>
+    @end
+  </div>
 @end

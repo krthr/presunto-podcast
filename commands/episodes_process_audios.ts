@@ -23,7 +23,7 @@ export default class EpisodesProcessAudios extends BaseCommand {
 
   @inject()
   async run(audioService: AudioService) {
-    const episodes = await Episode.query().limit(this.limit)
+    const episodes = await Episode.query().orderBy('publishedAt', 'desc').limit(this.limit)
 
     logger.info(`${episodes.length} episodes found`)
 
