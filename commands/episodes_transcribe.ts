@@ -71,7 +71,7 @@ export default class EpisodesTranscribe extends BaseCommand {
       logger.info(`transcription embedding already exists`)
     } else if (audioEmbedding.summary) {
       const embedding = await openAiService.embedding(audioEmbedding.summary)
-      audioEmbedding.transcriptionEmbedding = JSON.stringify(embedding)
+      audioEmbedding.transcriptionEmbedding = embedding
       await audioEmbedding.save()
     }
   }

@@ -38,6 +38,9 @@ export default class AudioEmbedding extends BaseModel {
         logger.error(error)
       }
     },
+    serialize(value: number[]) {
+      return JSON.stringify(value)
+    },
   })
   declare transcriptionEmbedding?: number[]
 
