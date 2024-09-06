@@ -1,7 +1,7 @@
 import type { CommandOptions } from '@adonisjs/core/types/ace'
 
 import { inject } from '@adonisjs/core'
-import { BaseCommand } from '@adonisjs/core/ace'
+import { BaseCommand, flags } from '@adonisjs/core/ace'
 
 import logger from '@adonisjs/core/services/logger'
 
@@ -16,6 +16,9 @@ export default class EpisodesTypesense extends BaseCommand {
     startApp: true,
   }
 
+  @flags.number({ default: 1 })
+  declare limit: number
+
   @inject()
   async run(typesenseService: TypesenseService) {
     logger.info('creating episodes collection')
@@ -24,7 +27,7 @@ export default class EpisodesTypesense extends BaseCommand {
       name: 'episodes',
       fields: [
         {
-          name: 'acast_episode_id',
+          name: 'acastEpisodeId',
           type: 'string',
         },
         {
@@ -45,11 +48,17 @@ export default class EpisodesTypesense extends BaseCommand {
           index: false,
         },
         {
-          name: 'transcription_embedding',
+          name: 'transcriptionEmbedding',
           type: 'float[]',
           num_dim: 1536,
         },
+        {
+          name: 'publishedAt',
+          type: 'int64',
+          sort: true,
+        },
       ],
+      default_sorting_field: 'publishedAt',
     })
 
     const audioEmbeddings = await AudioEmbedding.query()
@@ -57,18 +66,28 @@ export default class EpisodesTypesense extends BaseCommand {
       .whereNotNull('summary')
       .whereNotNull('transcription')
       .whereNotNull('transcription_embedding')
+      .whereHas('episode', (q) => {
+        q.whereNotNull('title').whereNotNull('image').whereNotNull('published_at')
+      })
+      .limit(this.limit)
 
     for (const audioEmbedding of audioEmbeddings) {
       logger.info(`indexing ${audioEmbedding.episode.title}`)
 
+      const { acastEpisodeId, summary, transcription, episode, transcriptionEmbedding } =
+        audioEmbedding
+
+      const { title, image } = episode
+
       await typesenseService.index('episodes', {
-        id: audioEmbedding.acastEpisodeId,
-        summary: audioEmbedding.summary,
-        transcription: audioEmbedding.transcription,
-        image: audioEmbedding.episode.image,
-        transcription_embedding: audioEmbedding.transcriptionEmbedding,
-        title: audioEmbedding.episode.title,
-        acast_episode_id: audioEmbedding.acastEpisodeId,
+        id: acastEpisodeId,
+        summary,
+        transcription,
+        image,
+        transcriptionEmbedding,
+        title,
+        acastEpisodeId,
+        publishedAt: episode.publishedAt.toUnixInteger(),
       })
     }
   }

@@ -27,6 +27,9 @@ export default class Episode extends BaseModel {
   @hasOne(() => AudioEmbedding, { foreignKey: 'acastEpisodeId' })
   declare audioEmbedding: HasOne<typeof AudioEmbedding>
 
+  @column.dateTime()
+  declare publishedAt: DateTime
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 

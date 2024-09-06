@@ -3,13 +3,14 @@ import logger from '@adonisjs/core/services/logger'
 import vine from '@vinejs/vine'
 
 import { XMLParser } from 'fast-xml-parser'
+import { DateTime } from 'luxon'
 
 const itemsValidator = vine.array(
   vine.object({
     acast_episodeId: vine.string(),
     acast_showId: vine.string(),
     title: vine.unionOfTypes([vine.string(), vine.number()]),
-    // description: vine.string(),
+    pubDate: vine.string().transform((value) => DateTime.fromJSDate(new Date(value))),
     enclosure: vine.object({
       url: vine.string().url(),
       length: vine.number().positive(),

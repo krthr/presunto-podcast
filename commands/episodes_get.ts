@@ -39,6 +39,7 @@ export default class EpisodesGet extends BaseCommand {
           audioUrl: item.enclosure.url,
           image: item.itunes_image.href,
           url: item.link,
+          publishedAt: item.pubDate,
         }
       )
     }
