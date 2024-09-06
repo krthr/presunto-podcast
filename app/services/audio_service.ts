@@ -8,8 +8,16 @@ import { join } from 'node:path'
 import FfmpegService from '#services/ffmpeg_service'
 import { inject } from '@adonisjs/core'
 
-const rawAudiosPath = app.tmpPath('audios', 'raw')
-const processedAudiosPath = app.tmpPath('audios', 'processed')
+export const rawAudiosPath = app.tmpPath('audios', 'raw')
+export const processedAudiosPath = app.tmpPath('audios', 'processed')
+
+export function getRawAudioFilePath(episode: Episode) {
+  return join(rawAudiosPath, `${episode.acastEpisodeId}.mp3`)
+}
+
+export function getProcessedAudioFilePath(episode: Episode) {
+  return join(processedAudiosPath, `${episode.acastEpisodeId}.mp3`)
+}
 
 @inject()
 export default class AudioService {
@@ -18,14 +26,6 @@ export default class AudioService {
 
     mkdirSync(rawAudiosPath, { recursive: true })
     mkdirSync(processedAudiosPath, { recursive: true })
-  }
-
-  public rawAudioFilePath(episode: Episode) {
-    return join(rawAudiosPath, `${episode.acastEpisodeId}.mp3`)
-  }
-
-  public processedAudioFilePath(episode: Episode) {
-    return join(processedAudiosPath, `${episode.acastEpisodeId}.mp3`)
   }
 
   public async downloadAudio(episode: Episode) {
@@ -46,8 +46,8 @@ export default class AudioService {
   }
 
   public async processAudio(episode: Episode) {
-    const rawAudioFilePath = this.rawAudioFilePath(episode)
-    const processedAudioFilePath = this.processedAudioFilePath(episode)
+    const rawAudioFilePath = getRawAudioFilePath(episode)
+    const processedAudioFilePath = getProcessedAudioFilePath(episode)
 
     if (existsSync(processedAudioFilePath)) {
       logger.info(`processed audio already exists in ${processedAudioFilePath}`)
@@ -56,6 +56,6 @@ export default class AudioService {
 
     logger.info(`processing audio ${rawAudioFilePath}`)
 
-    this.ffmpegService.compress(rawAudioFilePath, processedAudioFilePath)
+    await this.ffmpegService.compress(rawAudioFilePath, processedAudioFilePath)
   }
 }
