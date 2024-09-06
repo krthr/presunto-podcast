@@ -8,9 +8,8 @@ import { inject } from '@adonisjs/core'
 
 import AudioService from '#services/audio_service'
 
-import { existsSync, readFileSync } from 'node:fs'
+import { existsSync } from 'node:fs'
 import OpenAiService from '#services/open_ai_service'
-import AudioEmbedding from '#models/audio_embedding'
 
 export default class EpisodesTranscribe extends BaseCommand {
   static commandName = 'episodes:transcribe'
