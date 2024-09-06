@@ -27,4 +27,5 @@ ENV NODE_ENV=production
 WORKDIR /app
 COPY --from=production-deps /app/node_modules /app/node_modules
 COPY --from=build /app/build /app
+COPY ./tmp/db.sqlite3 /app/tmp/db.sqlite3
 CMD ["node", "./bin/server.js"]
