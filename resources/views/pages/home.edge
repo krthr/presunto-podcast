@@ -1,8 +1,8 @@
 @layout.app()
-  <div class="py-2 fixed top-0 left-0 z-10 w-full">
+  <div class="pt-2 pb-4 fixed top-0 left-0 z-10 w-full bg-base-100">
     <form class="max-w-[200px] m-auto" method="GET" action="/">
       <label class="input input-bordered flex items-center gap-2">
-        <input name="q" type="text" class="grow" placeholder="Buscar..." />
+        <input name="q" type="text" class="grow" placeholder="Buscar..." value="{{ session.get('q', '') }}" />
         <button class="btn btn-ghost btn-circle" type="submit">
           <iconify-icon icon="ph:magnifying-glass" height="25">
           </iconify-icon>

@@ -18,7 +18,7 @@ export default class EpisodesController {
     protected typesenseService: TypesenseService
   ) {}
 
-  async search({ request, view }: HttpContext) {
+  async search({ request, session, view }: HttpContext) {
     let q: string = (request.input('q', '') || '').trim()
 
     if (!q) {
@@ -51,7 +51,7 @@ export default class EpisodesController {
 
       payload.sort_by = sort_by.join(',')
 
-      const response = await this.typesenseService.client.multiSearch.perform<
+      const { results } = await this.typesenseService.client.multiSearch.perform<
         {
           acastEpisodeId: string
           summary: string
@@ -71,7 +71,13 @@ export default class EpisodesController {
         }
       )
 
-      const episodes = response.results.at(0)
+      if (q !== '*') {
+        session.put('q', q)
+      } else {
+        session.forget('q')
+      }
+
+      const episodes = results.at(0)
       return view.render('pages/home', { episodes })
     } catch (error) {
       logger.error({ error })
