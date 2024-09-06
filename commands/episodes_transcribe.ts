@@ -6,7 +6,7 @@ import logger from '@adonisjs/core/services/logger'
 import Episode from '#models/episode'
 import { inject } from '@adonisjs/core'
 
-import AudioService from '#services/audio_service'
+import { getProcessedAudioFilePath } from '#services/audio_service'
 
 import { existsSync } from 'node:fs'
 import OpenAiService from '#services/open_ai_service'
@@ -23,7 +23,7 @@ export default class EpisodesTranscribe extends BaseCommand {
   declare acastEpisodeId: string
 
   @inject()
-  async run(audioService: AudioService, openAiService: OpenAiService) {
+  async run(openAiService: OpenAiService) {
     const episode = await Episode.findBy('acast_episode_id', this.acastEpisodeId)
 
     if (!episode) {
@@ -38,7 +38,7 @@ export default class EpisodesTranscribe extends BaseCommand {
     if (audioEmbedding.transcription) {
       logger.info(`episode already transcribed`)
     } else {
-      const processedAudioFilePath = audioService.processedAudioFilePath(episode)
+      const processedAudioFilePath = getProcessedAudioFilePath(episode)
 
       if (!existsSync(processedAudioFilePath)) {
         logger.warn(`no file found in ${processedAudioFilePath}`)

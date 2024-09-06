@@ -14,6 +14,9 @@ export default class EpisodesProcessAudios extends BaseCommand {
   @flags.number({ default: 1 })
   declare limit: number
 
+  @flags.number({ default: 3 })
+  declare concurrency: number
+
   static options: CommandOptions = {
     startApp: true,
   }
@@ -25,7 +28,7 @@ export default class EpisodesProcessAudios extends BaseCommand {
     logger.info(`${episodes.length} episodes found`)
 
     while (episodes.length) {
-      const chunks = episodes.splice(0, 3)
+      const chunks = episodes.splice(0, this.concurrency)
       const promises = chunks.map(async (episode) => {
         logger.info(`processing episode ${episode.title} with id=${episode.acastEpisodeId}`)
 
