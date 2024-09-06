@@ -1,14 +1,16 @@
 @layout.app()
-<div>
-  <form method="GET" action="/">
-    <label class="input flex items-center gap-2 input-bordered">
+<div class="py-2 fixed top-0 left-0 z-10 w-full">
+  <form class="max-w-[200px] m-auto" method="GET" action="/">
+    <label class="input input-bordered flex items-center gap-2">
       <input name="q" type="text" class="grow" placeholder="Buscar...">
-      <iconify-icon icon="eva:people-outline"></iconify-icon>
+      <button class="btn btn-ghost btn-circle" type="submit">
+        <iconify-icon icon="ph:magnifying-glass" height="25"></iconify-icon>
+      </button>
     </label>
   </form>
 </div>
 
-<div class="gap-3 grid grid-cols-2 md:grid-cols-4">
+<div class="gap-3 grid grid-cols-2 md:grid-cols-4 mb-10">
   @each(episode in episodes.hits)
   <div class="card card-bordered card-compact w-full shadow-xl hover:shadow-2xl">
     <figure class="border-b">

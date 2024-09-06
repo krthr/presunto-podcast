@@ -19,7 +19,11 @@ export default class EpisodesController {
   ) {}
 
   async search({ request, view }: HttpContext) {
-    const q = request.input('q', '*')
+    let q: string = (request.input('q', '') || '').trim()
+
+    if (!q) {
+      q = '*'
+    }
 
     try {
       const payload: MultiSearchRequestSchema = {
@@ -39,9 +43,12 @@ export default class EpisodesController {
 
           payload.vector_query = undefined
         }
+
+        sort_by.push('_text_match:desc')
+      } else {
+        sort_by.push('publishedAt:desc')
       }
 
-      sort_by.push('_text_match:desc')
       payload.sort_by = sort_by.join(',')
 
       const response = await this.typesenseService.client.multiSearch.perform<
@@ -60,7 +67,7 @@ export default class EpisodesController {
         {
           query_by: 'summary,transcription,title',
           exclude_fields: 'transcriptionEmbedding',
-          per_page: 30,
+          per_page: 250,
         }
       )
 
@@ -68,7 +75,7 @@ export default class EpisodesController {
       return view.render('pages/home', { episodes })
     } catch (error) {
       logger.error({ error })
-      return { error }
+      return view.render('pages/home', {})
     }
   }
 
