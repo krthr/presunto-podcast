@@ -7,19 +7,28 @@
 inspect(episodes)
 }}
 
-<div class="grid  grid-cols-4">
+<div class="gap-3 grid grid-cols-2 md:grid-cols-4">
   @each(episode in episodes.hits)
-  <div class="card w-full">
-    <figure>
+  <div class="card card-bordered card-compact w-full shadow-xl hover:shadow-2xl">
+    <figure class="border-b">
       <img src="{{ episode.document.image }}" />
     </figure>
-    <div class="card-body">
-      <h2 class="card-title">{{ episode.document.title }}</h2>
+    <div class="card-body bg-white rounded-b-xl">
+      <h3 class="card-title line-clamp-2 text-ellipsis">
+        {{ episode.document.title }}
+      </h3>
 
+      <p></p>
 
-      <p class="text-ellipsis line-clamp-3">
-        {{{ markdown(episode.document.summary) }}}
+      {{--  @if(episode.highlight?.transcription)
+      <p>
+        {{{ episode.highlight?.transcription.snippet }}}
       </p>
+      @end  --}}
+
+      {{--  <p class="text-ellipsis line-clamp-3">
+        {{{ markdown(episode.document.summary) }}}
+      </p>  --}}
     </div>
   </div>
   @end

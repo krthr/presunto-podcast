@@ -12,6 +12,10 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
   </head>
   <body>
-    {{{ await $slots.main() }}}
+    <div class="w-full">
+      <div class="m-auto max-w-7xl">
+        {{{ await $slots.main() }}}
+      </div>
+    </div>
   </body>
 </html>
