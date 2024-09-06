@@ -32,7 +32,7 @@ export default class EpisodesController {
       if (q !== '*') {
         try {
           const vector = await this.openAiService.embedding(q)
-          payload.vector_query = `transcription_embedding:(${JSON.stringify(vector)})`
+          payload.vector_query = `transcriptionEmbedding:(${JSON.stringify(vector)})`
           sort_by.push('_vector_distance:desc')
         } catch (error) {
           logger.error({ error })
@@ -44,17 +44,28 @@ export default class EpisodesController {
       sort_by.push('_text_match:desc')
       payload.sort_by = sort_by.join(',')
 
-      const response = await this.typesenseService.client.multiSearch.perform(
+      const response = await this.typesenseService.client.multiSearch.perform<
+        {
+          acastEpisodeId: string
+          summary: string
+          transcription: string
+          title: string
+          image: string
+          publishedAt: number
+        }[]
+      >(
         {
           searches: [payload],
         },
         {
           query_by: 'summary,transcription,title',
-          exclude_fields: 'transcription_embedding',
+          exclude_fields: 'transcriptionEmbedding',
+          per_page: 30,
         }
       )
 
-      return view.render('pages/home', { response })
+      const episodes = response.results.at(0)
+      return view.render('pages/home', { episodes })
     } catch (error) {
       logger.error({ error })
       return { error }
