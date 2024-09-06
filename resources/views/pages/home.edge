@@ -1,11 +1,12 @@
 @layout.app()
-<h1>
-  Hello world from {{ request.url() }} endpoint
-</h1>
-
-{{
-inspect(episodes)
-}}
+<div>
+  <form method="GET" action="/">
+    <label class="input flex items-center gap-2 input-bordered">
+      <input name="q" type="text" class="grow" placeholder="Buscar...">
+      <iconify-icon icon="eva:people-outline"></iconify-icon>
+    </label>
+  </form>
+</div>
 
 <div class="gap-3 grid grid-cols-2 md:grid-cols-4">
   @each(episode in episodes.hits)
@@ -17,6 +18,10 @@ inspect(episodes)
       <h3 class="card-title line-clamp-2 text-ellipsis">
         {{ episode.document.title }}
       </h3>
+
+      <p>
+        {{ humanDate(episode.document.publishedAt) }}
+      </p>
 
       <p></p>
 

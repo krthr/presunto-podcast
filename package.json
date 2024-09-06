@@ -67,6 +67,7 @@
     "@vinejs/vine": "^2.1.0",
     "better-sqlite3": "^11.2.1",
     "edge.js": "^6.0.2",
+    "iconify-icon": "^2.1.0",
     "luxon": "^3.5.0",
     "marked": "^14.1.1",
     "openai": "^4.57.3",
