@@ -6,11 +6,12 @@ import { BaseCommand, flags } from '@adonisjs/core/ace'
 import ace from '@adonisjs/core/services/ace'
 import logger from '@adonisjs/core/services/logger'
 import Episode from '#models/episode'
-import { readdirSync } from 'fs'
+
+import { readdirSync } from 'node:fs'
 import { processedAudiosPath } from '#services/audio_service'
 
 export default class EpisodesProcess extends BaseCommand {
-  static commandName = 'episodes:process'
+  static commandName = 'episodes:all'
   static description = ''
 
   static options: CommandOptions = {
@@ -55,5 +56,7 @@ export default class EpisodesProcess extends BaseCommand {
 
       await Promise.all(promises)
     }
+
+    await ace.exec('episodes:typesense', [])
   }
 }

@@ -1,7 +1,7 @@
 import type { CommandOptions } from '@adonisjs/core/types/ace'
 
 import { inject } from '@adonisjs/core'
-import { BaseCommand, flags } from '@adonisjs/core/ace'
+import { BaseCommand } from '@adonisjs/core/ace'
 
 import logger from '@adonisjs/core/services/logger'
 
@@ -15,9 +15,6 @@ export default class EpisodesTypesense extends BaseCommand {
   static options: CommandOptions = {
     startApp: true,
   }
-
-  @flags.number({ default: 1 })
-  declare limit: number
 
   @inject()
   async run(typesenseService: TypesenseService) {
@@ -69,7 +66,6 @@ export default class EpisodesTypesense extends BaseCommand {
       .whereHas('episode', (q) => {
         q.whereNotNull('title').whereNotNull('image').whereNotNull('published_at')
       })
-      .limit(this.limit)
 
     for (const audioEmbedding of audioEmbeddings) {
       logger.info(`indexing ${audioEmbedding.episode.title}`)
