@@ -2,10 +2,12 @@ import type { HttpContext } from '@adonisjs/core/http'
 import type { MultiSearchRequestSchema } from 'typesense/lib/Typesense/MultiSearch.js'
 
 import { inject } from '@adonisjs/core'
+import logger from '@adonisjs/core/services/logger'
+
+import Episode from '#models/episode'
 
 import OpenAiService from '#services/open_ai_service'
 import TypesenseService from '#services/typesense_service'
-import logger from '@adonisjs/core/services/logger'
 
 // import Episode from '#models/episode'
 
@@ -16,7 +18,7 @@ export default class EpisodesController {
     protected typesenseService: TypesenseService
   ) {}
 
-  async index({ request }: HttpContext) {
+  async search({ request, view }: HttpContext) {
     const q = request.input('q', '*')
 
     try {
@@ -52,10 +54,24 @@ export default class EpisodesController {
         }
       )
 
-      return response
+      return view.render('pages/home', { response })
     } catch (error) {
       logger.error({ error })
       return { error }
     }
+  }
+
+  async show({ request, response, view }: HttpContext) {
+    const id = request.param('id')
+    const episode = await Episode.query()
+      .where('acastEpisodeId', id)
+      .preload('audioEmbedding')
+      .first()
+
+    if (episode) {
+      return view.render('pages/episode', { episode })
+    }
+
+    return response.redirect('/')
   }
 }

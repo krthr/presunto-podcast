@@ -1,0 +1,17 @@
+<!DOCTYPE html lang="es">
+<html data-theme="cupcake">
+  <head>
+    <meta charset="utf-8" />
+    <title>
+      {{ title || "Your default title" }}
+    </title>
+    @if ($slots.meta)
+      {{{ await $slots.meta() }}}
+    @endif
+    
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+  </head>
+  <body>
+    {{{ await $slots.main() }}}
+  </body>
+</html>
