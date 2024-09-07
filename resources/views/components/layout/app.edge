@@ -11,21 +11,7 @@
     
     @vite(['resources/css/app.css', 'resources/js/app.ts'])
     
-    <!-- Matomo -->
-    <script>
-      var _paq = window._paq = window._paq || [];
-      /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-      _paq.push(['trackPageView']);
-      _paq.push(['enableLinkTracking']);
-      (function() {
-        var u="//analytics.krthr.co/";
-        _paq.push(['setTrackerUrl', u+'matomo.php']);
-        _paq.push(['setSiteId', '1']);
-        var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-        g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
-      })();
-    </script>
-    <!-- End Matomo Code -->
+    <script defer src="https://analytics.krthr.co/script.js"  data-domains="presunto.krthr.co" data-website-id="baea1006-3d91-475d-babd-d8eabe22d790"></script>
 
   </head>
   <body>
