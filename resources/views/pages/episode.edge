@@ -1,7 +1,32 @@
 @layout.app()
+  <div class="space-y-8">
 
-  {{ JSON.stringify(episode) }}
-  <div>
+    <div class="flex flex-wrap gap-4">
+      <figure>
+        <img class="rounded-md max-w-[300px]" src="{{ episode.image }}" alt="">
+      </figure>
+
+      <div>
+        <h1 class="text-4xl font-bold">
+          {{ episode.title }}
+        </h1>
+        <p>{{ episode.publishedAt }}</p>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-xl font-semibold mb-3">Resúmen</h2>
+      <div class="space-y-2">
+        {{{ markdown(episode.audioEmbedding.summary) }}}
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-xl font-semibold mb-3">Transcripción</h2>
+      <div class="space-y-2">
+        {{{ markdown(episode.audioEmbedding.transcription) }}}
+      </div>
+    </div>
 
   </div>
 

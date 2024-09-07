@@ -19,7 +19,25 @@
   </head>
   <body>
     <div class="w-full">
-      <div class="m-auto max-w-7xl py-10 pt-20 px-2 sm:px-0">
+      <div class="m-auto max-w-7xl py-10 px-2 sm:px-0">
+        <div class="navbar items-center mb-10">
+          <div class="flex-1">
+            <h1 class="font-bold text-xl">
+              <a href="/">Presunta Búsqueda</a>
+            </h1>
+          </div>
+          <div class="flex-none gap-2">
+            <form action="/" method="GET" class="mb-0">
+              <label class="input input-bordered flex items-center gap-2 md:w-auto">
+                <input name="q" type="text" placeholder="Buscar..." class="grow" value="{{ session.get('q', '') }}" />
+                <button class="" type="submit">
+                  <iconify-icon icon="ph:magnifying-glass" height="25"></iconify-icon>
+                </button>
+              </label>
+            </form>
+          </div>
+        </div>
+
         {{{ await $slots.main() }}}
       </div>
     </div>

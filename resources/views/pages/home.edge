@@ -1,43 +1,33 @@
 @layout.app()
-  <div class="pt-2 pb-4 fixed top-0 left-0 z-10 w-full bg-base-100">
-    <form class="max-w-[200px] m-auto" method="GET" action="/">
-      <label class="input input-bordered flex items-center gap-2">
-        <input name="q" type="text" class="grow" placeholder="Buscar..." value="{{ session.get('q', '') }}" />
-        <button class="btn btn-ghost btn-circle" type="submit">
-          <iconify-icon icon="ph:magnifying-glass" height="25">
-          </iconify-icon>
-        </button>
-      </label>
-    </form>
-  </div>
+  @if(session.get('q'))
+  <h2 class="mb-5 text-center text-lg">
+    Buscando <span class="font-medium">"{{ session.get('q') }}"</span>
+  </h2>
+  @end
 
-  <div class="gap-3 grid grid-cols-2 md:grid-cols-4 mb-10">
+  <div class="gap-3 grid grid-cols-1 md:grid-cols-2 mb-10">
     @each(episode in episodes.hits)
-      <div class="card card-bordered card-compact w-full shadow-xl hover:shadow-2xl">
-        <figure class="border-b">
-          <img src="{{ episode.document.image }}" />
-        </figure>
-        <div class="card-body bg-white rounded-b-xl">
-          <h3 class="card-title line-clamp-2 text-ellipsis">
-            {{ episode.document.title }}
-          </h3>
+      <div class="card card-bordered card-compact w-full shadow-lg hover:shadow-xl bg-white">
+        <div class="rounded-box p-4 gap-4 flex">
+          <img class="rounded-md max-w-[30%] border" src="{{ episode.document.image }}" />
 
-          <p>
-            {{ humanDate(episode.document.publishedAt) }}
-          </p>
+          <div class="flex-1">
+            <h3 class="card-title line-clamp-3 text-ellipsis text-xl hover:underline">
+              <a href="/{{ episode.document.acastEpisodeId }}">
+                {{ episode.document.title }}
+              </a>
+            </h3>
 
-          <p>
-          </p>
+            <p class="text-sm">
+              {{ humanDate(episode.document.publishedAt) }}
+            </p>
 
-          {{--  @if(episode.highlight?.transcription)
-          <p>
-          {{{ episode.highlight?.transcription.snippet }}}
-          </p>
-          @end  --}}
-
-          {{--  <p class="text-ellipsis line-clamp-3">
-          {{{ markdown(episode.document.summary) }}}
-          </p>  --}}
+            @if(episode.highlight?.transcription?.snippet)
+            <p class="text-sm line-clamp-3 italic mt-4">
+              ...{{{ episode.highlight?.transcription?.snippet }}}...
+            </p>
+            @end
+          </div>
         </div>
       </div>
     @end
