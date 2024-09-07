@@ -10,8 +10,21 @@
     @endif
     
     @vite(['resources/css/app.css', 'resources/js/app.ts'])
-    
-    <script defer src="https://analytics.krthr.co/script.js"  data-domains="presunto.krthr.co" data-website-id="baea1006-3d91-475d-babd-d8eabe22d790"></script>
+
+    <script 
+      defer 
+      src="https://analytics.krthr.co/script.js" 
+      data-domains="presunto.krthr.co" 
+      data-website-id="baea1006-3d91-475d-babd-d8eabe22d790"
+    ></script>
+
+    @if(session.get('q'))
+    <script>
+      window.addEventListener('DOMContentLoaded', () => {
+        window.umami.track('search', {q: "{{ session.get('q') }}"})
+      })
+    </script>
+    @end
 
   </head>
   <body>

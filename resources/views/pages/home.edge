@@ -1,4 +1,6 @@
-@layout.app()
+@layout.app({
+  title: session.get('q') ? `Buscando ${session.get('q')}` : ''
+})
   @if(session.get('q'))
   <h2 class="mb-5 text-center text-lg">
     {{ episodes.found }} resultados para <span class="font-medium">"{{ session.get('q') }}"</span>
@@ -31,12 +33,5 @@
         </div>
       </div>
     @end
-  </div>
-
-  <div class="join grid grid-cols-2">
-    <a class="join-item btn btn-outline">Anterior</a>
-    <a class="join-item btn btn-outline">
-      Siguiente
-    </a>
   </div>
 @end
