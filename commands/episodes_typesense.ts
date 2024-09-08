@@ -21,7 +21,7 @@ export default class EpisodesTypesense extends BaseCommand {
     logger.info('creating episodes collection')
 
     await typesenseService.getOrCreateCollection({
-      name: 'episodes',
+      name: 'episodes_2024_09_08_20_59',
       fields: [
         {
           name: 'acastEpisodeId',
@@ -54,6 +54,10 @@ export default class EpisodesTypesense extends BaseCommand {
           type: 'int64',
           sort: true,
         },
+        {
+          name: 'slug',
+          type: 'string',
+        },
       ],
       default_sorting_field: 'publishedAt',
     })
@@ -73,9 +77,9 @@ export default class EpisodesTypesense extends BaseCommand {
       const { acastEpisodeId, summary, transcription, episode, transcriptionEmbedding } =
         audioEmbedding
 
-      const { title, image } = episode
+      const { title, image, slug } = episode
 
-      await typesenseService.index('episodes', {
+      await typesenseService.index('episodes_2024_09_08_20_59', {
         id: acastEpisodeId,
         summary,
         transcription,
@@ -84,6 +88,7 @@ export default class EpisodesTypesense extends BaseCommand {
         title,
         acastEpisodeId,
         publishedAt: episode.publishedAt.toUnixInteger(),
+        slug,
       })
     }
   }

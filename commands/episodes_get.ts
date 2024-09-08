@@ -35,11 +35,12 @@ export default class EpisodesGet extends BaseCommand {
           acastShowId: item.acast_showId,
         },
         {
-          title: item.title.toString(),
+          title: item.title,
           audioUrl: item.enclosure.url,
           image: item.itunes_image.href,
           url: item.link,
           publishedAt: item.pubDate,
+          slug: item.acast_episodeUrl || item.acast_episodeId,
         }
       )
     }

@@ -23,7 +23,7 @@ export default class EpisodesController {
 
     try {
       const payload: MultiSearchRequestSchema = {
-        collection: 'episodes',
+        collection: 'episodes_2024_09_08_20_59',
         q,
       }
 
@@ -73,6 +73,7 @@ export default class EpisodesController {
     const id = request.param('id')
     const episode = await Episode.query()
       .where('acastEpisodeId', id)
+      .orWhere('slug', id)
       .preload('audioEmbedding')
       .first()
 

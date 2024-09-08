@@ -9,7 +9,19 @@ const itemsValidator = vine.array(
   vine.object({
     acast_episodeId: vine.string(),
     acast_showId: vine.string(),
-    title: vine.unionOfTypes([vine.string(), vine.number()]),
+    acast_episodeUrl: vine
+      .any()
+      .transform((v) => {
+        if (typeof v === 'string' || typeof v === 'number') {
+          return v.toString()
+        }
+      })
+      .optional(),
+    title: vine.any().transform((v: unknown) => {
+      if (typeof v === 'string') {
+        return v
+      }
+    }),
     pubDate: vine.string().transform((value) => DateTime.fromJSDate(new Date(value))),
     enclosure: vine.object({
       url: vine.string().url(),

@@ -24,6 +24,9 @@ export default class Episode extends BaseModel {
   @column()
   declare image: string
 
+  @column()
+  declare slug: string
+
   @hasOne(() => AudioEmbedding, { foreignKey: 'acastEpisodeId' })
   declare audioEmbedding: HasOne<typeof AudioEmbedding>
 
