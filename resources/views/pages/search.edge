@@ -1,7 +1,7 @@
 @layout.app({
   title: `Resultados para ${session.get('q')}`
 })
-  <div class="py-10">
+  <div class="pt-10">
     <a class="text-2xl font-bold mb-5" href="/">
       Presunta Búsqueda
     </a>
@@ -11,6 +11,8 @@
     </h3>
 
     @!component('components/search-form')
+
+    <div class="divider"></div>
   </div>
   
   @!component('components/episodes-grid', { episodes })
