@@ -1,9 +1,17 @@
 @layout.app({
   title: `Resultados para ${session.get('q')}`
 })
-  <h2 class="mb-5 text-lg font-medium">
-    {{ found }} resultados para <span class="font-medium">"{{ session.get('q') }}"</span>
-  </h2>
+  <div class="py-10">
+    <a class="text-2xl font-bold mb-5" href="/">
+      Presunta Búsqueda
+    </a>
+
+    <h3 class="text-xl mb-5">
+      {{ found }} resultados para <span class="font-medium">"{{ session.get('q') }}"</span>
+    </h3>
+
+    @!component('components/search-form')
+  </div>
   
   @!component('components/episodes-grid', { episodes })
 @end

@@ -1,0 +1,13 @@
+<form action="/search" method="GET" class="mb-0 mt-10">
+  <label class="input input-bordered flex items-center gap-2 md:w-auto max-w-[300px]">
+    <input name="q" type="text" placeholder="Buscar..." class="grow min-w-[200px]" value="{{ session.get('q', '') }}" />
+    @if(session.get('q'))
+    <a href="/">
+      <iconify-icon icon="ph:x" height="25"></iconify-icon>
+    </a>
+    @end
+    <button type="submit">
+      <iconify-icon icon="ph:magnifying-glass" height="25"></iconify-icon>
+    </button>
+  </label>
+</form>
