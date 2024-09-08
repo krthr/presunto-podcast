@@ -1,0 +1,33 @@
+<div class="gap-3 grid grid-cols-1 md:grid-cols-4 mb-10">
+  @each(episode in episodes)
+  <div class="card card-bordered card-compact rounded-md w-full shadow-lg hover:shadow-xl bg-white">
+    <figure>
+      <img class="w-full aspect-square" src="{{ episode.image }}" />
+    </figure>
+
+    <div class="card-body">
+      <h3 class="card-title line-clamp-3 text-ellipsis text-xl hover:underline">
+        <a href="/{{ episode.slug }}">
+          {{ episode.title }}
+        </a>
+      </h3>
+
+      <p class="text-sm">
+        {{ humanDate(episode.publishedAt) }}
+      </p>
+
+      @if(episode.highlight?.transcriptionText)
+      <p class="line-clamp-4 italic">
+        [...] {{{ episode.highlight?.transcriptionText.snippet }}} [...]
+      </p>
+      @elseif(episode.description)
+      <div class="*:line-clamp-4 *:italic">
+        <div>
+          {{{ excerpt(episode.description, 700) }}}
+        </div>
+      </div>
+      @end
+    </div>
+  </div>
+  @end
+</div>

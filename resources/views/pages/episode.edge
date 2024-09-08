@@ -3,7 +3,7 @@
 })
   <div class="space-y-8">
 
-    <div class="flex flex-wrap gap-4">
+    <div class="flex flex-wrap md:flex-nowrap gap-4">
       <figure>
         <img class="rounded-md max-w-[300px]" src="{{ episode.image }}" alt="">
       </figure>
@@ -12,23 +12,52 @@
         <h1 class="text-4xl font-bold">
           {{ episode.title }}
         </h1>
+
         <p>{{ humanDate(episode.publishedAt) }}</p>
+
+        <div class="mt-4">
+          @if(episode.url)
+          <a class="btn btn-primary" target="_blank" href="{{ episode.url }}">
+            Escuchar
+            <iconify-icon icon="ph:play-fill"></iconify-icon>
+          </a>
+          @end
+        </div>
+
+        {{--  <div class="ul*:list-inside a:*:font-medium">
+          <p>
+            {{{ episode.description }}}
+          </p>
+        </div>  --}}
       </div>
     </div>
 
-    <div>
+    {{--  <div>
       <h2 class="text-xl font-semibold mb-3">Resúmen</h2>
       <div class="space-y-2">
         {{{ markdown(episode.audioEmbedding.summary) }}}
       </div>
-    </div>
+    </div>  --}}
 
-    <div>
-      <h2 class="text-xl font-semibold mb-3">Transcripción</h2>
-      <div class="space-y-2">
-        {{{ markdown(episode.audioEmbedding.transcription) }}}
+    @if(episode.transcriptionText)
+    <div class="collapse bg-base-200">
+      <input type="checkbox" />
+      <div class="collapse-title text-xl font-medium">Ver transcripción (solo texto)</div>
+      <div class="collapse-content">
+        <pre class="whitespace-pre-wrap">{{ episode.transcriptionText }}</pre>
       </div>
     </div>
+    @end
+
+    @if(episode.srt)
+    <div class="collapse bg-base-200">
+      <input type="checkbox" />
+      <div class="collapse-title text-xl font-medium">Ver transcripción (con marcas de tiempo)</div>
+      <div class="collapse-content">
+        <pre class="whitespace-pre-wrap">{{{ nl2br(episode.srt) }}}</pre>
+      </div>
+    </div>
+    @end
 
   </div>
 

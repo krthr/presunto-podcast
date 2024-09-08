@@ -1,0 +1,9 @@
+@layout.app({
+  title: `Resultados para ${session.get('q')}`
+})
+  <h2 class="mb-5 text-lg font-medium">
+    {{ found }} resultados para <span class="font-medium">"{{ session.get('q') }}"</span>
+  </h2>
+  
+  @!component('components/episodes-grid', { episodes })
+@end

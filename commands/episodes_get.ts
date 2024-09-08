@@ -41,6 +41,7 @@ export default class EpisodesGet extends BaseCommand {
           url: item.link,
           publishedAt: item.pubDate,
           slug: item.acast_episodeUrl || item.acast_episodeId,
+          description: item.description,
         }
       )
     }

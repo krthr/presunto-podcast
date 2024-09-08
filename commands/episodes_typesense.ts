@@ -1,12 +1,14 @@
 import type { CommandOptions } from '@adonisjs/core/types/ace'
 
 import { inject } from '@adonisjs/core'
-import { BaseCommand } from '@adonisjs/core/ace'
+import { BaseCommand, flags } from '@adonisjs/core/ace'
 
 import logger from '@adonisjs/core/services/logger'
 
-import AudioEmbedding from '#models/audio_embedding'
 import TypesenseService from '#services/typesense_service'
+import Episode from '#models/episode'
+
+const DEFAULT_COLLECTION_NAME = 'episodes'
 
 export default class EpisodesTypesense extends BaseCommand {
   static commandName = 'episodes:typesense'
@@ -16,28 +18,29 @@ export default class EpisodesTypesense extends BaseCommand {
     startApp: true,
   }
 
+  @flags.string({ default: DEFAULT_COLLECTION_NAME })
+  declare collectionName: string
+
   @inject()
   async run(typesenseService: TypesenseService) {
     logger.info('creating episodes collection')
 
     await typesenseService.getOrCreateCollection({
-      name: 'episodes_2024_09_08_20_59',
+      name: this.collectionName,
       fields: [
-        {
-          name: 'acastEpisodeId',
-          type: 'string',
-        },
-        {
-          name: 'summary',
-          type: 'string',
-        },
-        {
-          name: 'transcription',
-          type: 'string',
-        },
         {
           name: 'title',
           type: 'string',
+        },
+        {
+          name: 'audioUrl',
+          type: 'string',
+          index: false,
+        },
+        {
+          name: 'url',
+          type: 'string',
+          index: false,
         },
         {
           name: 'image',
@@ -45,50 +48,49 @@ export default class EpisodesTypesense extends BaseCommand {
           index: false,
         },
         {
-          name: 'transcriptionEmbedding',
-          type: 'float[]',
-          num_dim: 1536,
+          name: 'description',
+          type: 'string',
+        },
+        {
+          name: 'slug',
+          type: 'string',
+        },
+        {
+          name: 'acastEpisodeId',
+          type: 'string',
+        },
+        {
+          name: 'transcriptionText',
+          type: 'string',
         },
         {
           name: 'publishedAt',
           type: 'int64',
           sort: true,
         },
-        {
-          name: 'slug',
-          type: 'string',
-        },
       ],
       default_sorting_field: 'publishedAt',
     })
 
-    const audioEmbeddings = await AudioEmbedding.query()
-      .preload('episode')
-      .whereNotNull('summary')
-      .whereNotNull('transcription')
-      .whereNotNull('transcription_embedding')
-      .whereHas('episode', (q) => {
-        q.whereNotNull('title').whereNotNull('image').whereNotNull('published_at')
-      })
+    const episodes = await Episode.query().whereNotNull('transcription_text')
 
-    for (const audioEmbedding of audioEmbeddings) {
-      logger.info(`indexing ${audioEmbedding.episode.title}`)
+    for (const episode of episodes) {
+      logger.info(`indexing ${episode.title}`)
 
-      const { acastEpisodeId, summary, transcription, episode, transcriptionEmbedding } =
-        audioEmbedding
+      const { title, acastEpisodeId, audioUrl, url, image, description, slug, transcriptionText } =
+        episode
 
-      const { title, image, slug } = episode
-
-      await typesenseService.index('episodes_2024_09_08_20_59', {
+      await typesenseService.index(this.collectionName, {
         id: acastEpisodeId,
-        summary,
-        transcription,
-        image,
-        transcriptionEmbedding,
         title,
         acastEpisodeId,
-        publishedAt: episode.publishedAt.toUnixInteger(),
+        audioUrl,
+        url,
+        image,
+        description,
         slug,
+        transcriptionText,
+        publishedAt: episode.publishedAt.toUnixInteger(),
       })
     }
   }

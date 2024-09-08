@@ -73,6 +73,7 @@
     "marked": "^14.1.1",
     "openai": "^4.57.3",
     "reflect-metadata": "^0.2.2",
+    "replicate": "^0.32.1",
     "typesense": "^1.8.2"
   },
   "hotHook": {

@@ -1,6 +1,6 @@
 import { inject } from '@adonisjs/core'
 import logger from '@adonisjs/core/services/logger'
-import { createReadStream } from 'fs'
+
 import OpenAI from 'openai'
 
 @inject()
@@ -20,18 +20,6 @@ export default class OpenAiService {
     })
 
     return response.choices[0].message.content
-  }
-
-  async transcribeAudio(path: string) {
-    logger.info('transcribing')
-
-    const transcription = await this.openai.audio.transcriptions.create({
-      file: createReadStream(path),
-      model: 'whisper-1',
-      response_format: 'json',
-    })
-
-    return transcription.text
   }
 
   async embedding(input: string) {

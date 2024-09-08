@@ -30,16 +30,22 @@
   <body>
     <div class="w-full">
       <div class="m-auto max-w-7xl py-10 px-2 sm:px-0">
-        <div class="navbar items-center mb-10">
-          <div class="flex-1">
-            <h1 class="font-bold text-xl">
+        <div class="navbar items-center mb-10 flex-wrap flex">
+          <div class="flex-none">
+            <h1 class="font-bold text-xl py-4 mr-6">
               <a href="/">Presunta Búsqueda</a>
             </h1>
           </div>
+          <div class="flex-1"></div>
           <div class="flex-none gap-2">
-            <form action="/" method="GET" class="mb-0">
+            <form action="/search" method="GET" class="mb-0">
               <label class="input input-bordered flex items-center gap-2 md:w-auto">
-                <input name="q" type="text" placeholder="Buscar..." class="grow" value="{{ session.get('q', '') }}" />
+                <input name="q" type="text" placeholder="Buscar..." class="grow min-w-[200px]" value="{{ session.get('q', '') }}" />
+                @if(session.get('q'))
+                <a href="/">
+                  <iconify-icon icon="ph:x" height="25"></iconify-icon>
+                </a>
+                @end
                 <button class="" type="submit">
                   <iconify-icon icon="ph:magnifying-glass" height="25"></iconify-icon>
                 </button>

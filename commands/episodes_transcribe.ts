@@ -6,10 +6,11 @@ import logger from '@adonisjs/core/services/logger'
 import Episode from '#models/episode'
 import { inject } from '@adonisjs/core'
 
-import { getProcessedAudioFilePath } from '#services/audio_service'
+import { getRawAudioFilePath } from '#services/audio_service'
 
 import { existsSync } from 'node:fs'
-import OpenAiService from '#services/open_ai_service'
+
+import ReplicateService from '#services/replicate_service'
 
 export default class EpisodesTranscribe extends BaseCommand {
   static commandName = 'episodes:transcribe'
@@ -22,8 +23,11 @@ export default class EpisodesTranscribe extends BaseCommand {
   @flags.string({ required: true })
   declare acastEpisodeId: string
 
+  @flags.boolean({ default: false })
+  declare forceTranscribe: boolean
+
   @inject()
-  async run(openAiService: OpenAiService) {
+  async run(replicateService: ReplicateService) {
     const episode = await Episode.findBy('acast_episode_id', this.acastEpisodeId)
 
     if (!episode) {
@@ -31,48 +35,25 @@ export default class EpisodesTranscribe extends BaseCommand {
       process.exit(1)
     }
 
-    logger.info(`processing "${episode.title}" with id=${episode.acastEpisodeId}`)
+    logger.info(
+      `processing "${episode.title}" with id=${episode.acastEpisodeId} slug=${episode.slug}`
+    )
 
-    const audioEmbedding = await episode.related('audioEmbedding').firstOrCreate({})
-
-    if (audioEmbedding.transcription) {
+    if (episode.transcriptionText && !this.forceTranscribe) {
       logger.info(`episode already transcribed`)
     } else {
-      const processedAudioFilePath = getProcessedAudioFilePath(episode)
+      const audioFilePath = getRawAudioFilePath(episode)
 
-      if (!existsSync(processedAudioFilePath)) {
-        logger.warn(`no file found in ${processedAudioFilePath}`)
+      if (!existsSync(audioFilePath)) {
+        logger.warn(`no file found in ${audioFilePath}`)
         process.exit(1)
       }
 
-      const transcription = await openAiService.transcribeAudio(processedAudioFilePath)
-      audioEmbedding.transcription = transcription
-      await audioEmbedding.save()
-    }
+      const { chunks, text } = await replicateService.transcribeAudio(audioFilePath)
 
-    if (audioEmbedding.summary) {
-      logger.info(`summary already exists`)
-    } else {
-      const summary = await openAiService.completion(
-        [
-          'Genera un resumen de la siguiente transcripción de un episodio de un podcast:',
-          audioEmbedding.transcription,
-          'RESUMEN:',
-        ].join('\n')
-      )
-
-      if (summary) {
-        audioEmbedding.summary = summary
-        await audioEmbedding.save()
-      }
-    }
-
-    if (audioEmbedding.transcriptionEmbedding) {
-      logger.info(`transcription embedding already exists`)
-    } else if (audioEmbedding.summary) {
-      const embedding = await openAiService.embedding(audioEmbedding.summary)
-      audioEmbedding.transcriptionEmbedding = embedding
-      await audioEmbedding.save()
+      episode.transcriptionText = text
+      episode.transcriptionChunks = chunks
+      await episode.save()
     }
   }
 }

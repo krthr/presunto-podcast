@@ -5,77 +5,83 @@ import { inject } from '@adonisjs/core'
 import logger from '@adonisjs/core/services/logger'
 
 import Episode from '#models/episode'
-
 import TypesenseService from '#services/typesense_service'
 
-// import Episode from '#models/episode'
+import { searchEpisodesValidator } from '#validators/search'
 
 @inject()
 export default class EpisodesController {
   constructor(protected typesenseService: TypesenseService) {}
 
-  async search({ request, session, view }: HttpContext) {
-    let q: string = (request.input('q', '') || '').trim()
+  async index({ session, view }: HttpContext) {
+    session.forget('q')
 
-    if (!q) {
-      q = '*'
-    }
+    const episodes = await Episode.query()
+    return view.render('pages/index', { episodes })
+  }
 
+  async search({ request, response, session, view }: HttpContext) {
     try {
-      const payload: MultiSearchRequestSchema = {
-        collection: 'episodes_2024_09_08_20_59',
-        q,
+      let { page, q } = await request.validateUsing(searchEpisodesValidator)
+
+      if (!q) {
+        return response.redirect('/')
       }
 
-      const sort_by: string[] = []
-
-      sort_by.push('_text_match:desc')
-      sort_by.push('publishedAt:desc')
-      payload.sort_by = sort_by.join(',')
+      const payload: MultiSearchRequestSchema = {
+        collection: 'episodes_2024_09_08_22_54',
+        q,
+        sort_by: '_text_match:desc,publishedAt:desc',
+      }
 
       const { results } = await this.typesenseService.client.multiSearch.perform<
-        {
-          acastEpisodeId: string
-          summary: string
-          transcription: string
-          title: string
-          image: string
-          publishedAt: number
-        }[]
+        Pick<
+          Episode,
+          | 'id'
+          | 'acastEpisodeId'
+          | 'title'
+          | 'audioUrl'
+          | 'url'
+          | 'image'
+          | 'description'
+          | 'slug'
+          | 'publishedAt'
+          | 'transcriptionText'
+        >[]
       >(
         {
           searches: [payload],
         },
         {
-          query_by: 'transcription,title',
-          exclude_fields: 'transcriptionEmbedding',
+          query_by: 'transcriptionText,title',
+          page,
           per_page: 250,
           highlight_affix_num_tokens: 10,
         }
       )
 
-      if (q !== '*') {
-        session.put('q', q)
-      } else {
-        session.forget('q')
-      }
+      session.put('q', q)
 
-      const episodes = results.at(0)
-      episodes?.hits?.at(0)?.highlights?.at(0)?.snippet
-      return view.render('pages/home', { episodes })
+      const episodes = results.at(0)?.hits?.map(({ document, highlight }) => {
+        return {
+          ...document,
+          highlight,
+        }
+      })
+
+      const found = results.at(0)?.found || 0
+
+      return view.render('pages/search', { episodes, found })
     } catch (error) {
       logger.error({ error })
-      return view.render('pages/home', {})
+
+      return response.redirect('/')
     }
   }
 
   async show({ request, response, view }: HttpContext) {
     const id = request.param('id')
-    const episode = await Episode.query()
-      .where('acastEpisodeId', id)
-      .orWhere('slug', id)
-      .preload('audioEmbedding')
-      .first()
+    const episode = await Episode.query().where('acastEpisodeId', id).orWhere('slug', id).first()
 
     if (episode) {
       return view.render('pages/episode', { episode })

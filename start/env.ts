@@ -23,6 +23,8 @@ export default await Env.create(new URL('../', import.meta.url), {
   TYPESENSE_HOST: Env.schema.string(),
   TYPESENSE_API_KEY: Env.schema.string(),
 
+  REPLICATE_API_TOKEN: Env.schema.string.optional(),
+
   /*
   |----------------------------------------------------------
   | Variables for configuring session package

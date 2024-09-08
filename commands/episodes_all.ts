@@ -8,7 +8,7 @@ import logger from '@adonisjs/core/services/logger'
 import Episode from '#models/episode'
 
 import { readdirSync } from 'node:fs'
-import { processedAudiosPath } from '#services/audio_service'
+import { rawAudiosPath } from '#services/audio_service'
 
 export default class EpisodesProcess extends BaseCommand {
   static commandName = 'episodes:all'
@@ -27,25 +27,26 @@ export default class EpisodesProcess extends BaseCommand {
   @flags.number({ default: 5 })
   declare transcribeConcurrency: number
 
+  @flags.string({ required: false })
+  declare collectionName?: string
+
   @inject()
   async run() {
     logger.info('processing episodes')
 
     await ace.exec('episodes:get', ['--limit', this.limit.toString()])
-    await ace.exec('episodes:process-audios', [
+    await ace.exec('episodes:download-audios', [
       '--limit',
       this.limit.toString(),
       '--concurrency',
       this.audioConcurrency.toString(),
     ])
 
-    const processedAudios = readdirSync(processedAudiosPath)
+    const audiosFiles = readdirSync(rawAudiosPath)
       .filter((r) => r.endsWith('.mp3'))
       .map((r) => r.replace('.mp3', ''))
 
-    const episodes = await Episode.query()
-      .whereIn('acastEpisodeId', processedAudios)
-      .limit(this.limit)
+    const episodes = await Episode.query().whereIn('acastEpisodeId', audiosFiles).limit(this.limit)
 
     while (episodes.length) {
       const chunks = episodes.splice(0, this.transcribeConcurrency)
@@ -57,6 +58,11 @@ export default class EpisodesProcess extends BaseCommand {
       await Promise.all(promises)
     }
 
-    await ace.exec('episodes:typesense', [])
+    const args: string[] = []
+    if (this.collectionName) {
+      args.push('--collection-name', this.collectionName)
+    }
+
+    await ace.exec('episodes:typesense', args)
   }
 }

@@ -32,6 +32,7 @@ const itemsValidator = vine.array(
     itunes_image: vine.object({
       href: vine.string().url(),
     }),
+    description: vine.string(),
   })
 )
 

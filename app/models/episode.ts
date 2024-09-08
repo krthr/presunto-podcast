@@ -1,34 +1,68 @@
-import type { HasOne } from '@adonisjs/lucid/types/relations'
+import type { TranscriptionBody } from '#services/replicate_service'
 
-import { DateTime } from 'luxon'
-import { BaseModel, column, hasOne } from '@adonisjs/lucid/orm'
+import { DateTime, Duration } from 'luxon'
+import { BaseModel, column, computed } from '@adonisjs/lucid/orm'
 
-import AudioEmbedding from '#models/audio_embedding'
+import logger from '@adonisjs/core/services/logger'
 
 export default class Episode extends BaseModel {
   @column({ isPrimary: true })
-  declare acastEpisodeId: String
-
-  @column()
-  declare acastShowId: String
+  declare id: number
 
   @column()
   declare title: string
 
   @column()
-  declare audioUrl: string
+  declare audioUrl?: string | null
 
   @column()
-  declare url: string
+  declare url?: string | null
 
   @column()
-  declare image: string
+  declare image?: string | null
+
+  @column()
+  declare description?: string | null
+
+  //
 
   @column()
   declare slug: string
 
-  @hasOne(() => AudioEmbedding, { foreignKey: 'acastEpisodeId' })
-  declare audioEmbedding: HasOne<typeof AudioEmbedding>
+  //
+
+  @column()
+  declare acastEpisodeId: String
+
+  @column()
+  declare acastShowId: String
+
+  //
+
+  @column()
+  declare transcriptionText?: string | null
+
+  @column({
+    consume(value?: string) {
+      if (!value) {
+        return
+      }
+
+      try {
+        return JSON.parse(value) as TranscriptionBody['chunks']
+      } catch (error) {
+        logger.error({ error })
+      }
+    },
+    prepare(value: TranscriptionBody['chunks'] | null) {
+      if (value) {
+        return JSON.stringify(value)
+      }
+    },
+  })
+  declare transcriptionChunks?: TranscriptionBody['chunks'] | null
+
+  //
 
   @column.dateTime()
   declare publishedAt: DateTime
@@ -38,4 +72,26 @@ export default class Episode extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
+
+  //
+
+  @computed()
+  get srt() {
+    return this.transcriptionChunks
+      ?.map(
+        ({ text, timestamp }) =>
+          `${srtFormatTimestamp(timestamp[0])} --> ${srtFormatTimestamp(timestamp[1])}\t${text}`
+      )
+      .join('\n')
+  }
+}
+
+function srtFormatTimestamp(ts?: number | null): string {
+  if (ts) {
+    return Duration.fromObject({
+      seconds: ts,
+    }).toFormat('hh:mm:ss')
+  }
+
+  return '00:00:00'
 }
