@@ -2,7 +2,7 @@
   @each(episode in episodes)
   <div class="card card-bordered card-compact rounded-md w-full shadow-lg hover:shadow-xl bg-white">
     <figure>
-      <img class="w-full aspect-square" src="{{ episode.image }}" />
+      <img class="w-full aspect-square" src="{{ episode.image }}" loading="lazy" />
     </figure>
 
     <div class="card-body">
@@ -23,7 +23,7 @@
       @elseif(episode.description)
       <div class="*:line-clamp-4 *:italic">
         <div>
-          {{{ excerpt(episode.description, 700) }}}
+          {{{ excerpt(episode.description, 300) }}}
         </div>
       </div>
       @end
