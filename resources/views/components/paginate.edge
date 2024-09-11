@@ -2,6 +2,17 @@
 <div class="w-full flex">
   <div class="join mx-auto">
     <a 
+      href="{{ route('/search', {qs: {page: 1, q: q}}) }}" 
+      class="join-item btn"
+      {{
+        html.attrs({
+          disabled: !prevPage
+        })
+      }}
+    >
+      <iconify-icon icon="ph:caret-double-left" height="25"></iconify-icon>
+    </a>
+    <a 
       class="join-item btn"
       {{ html.attrs({ disabled: !prevPage }) }}
       @if(prevPage)
@@ -19,7 +30,7 @@
         }}"
       @end
     >
-      «
+      <iconify-icon icon="ph:arrow-left" height="25"></iconify-icon>
     </a>
     <button 
       class="join-item btn disabled"
@@ -44,7 +55,18 @@
         }}"
       @end
     >
-      »
+      <iconify-icon icon="ph:arrow-right" height="25"></iconify-icon>
+    </a>
+    <a 
+      href="{{ route('/search', [], { qs: { q: q, page: totalPages } }) }}" 
+      class="join-item btn"
+      {{
+        html.attrs({
+          disabled: !nextPage
+        })
+      }}
+    >
+      <iconify-icon icon="ph:caret-double-right" height="25"></iconify-icon>
     </a>
   </div>
 </div>
