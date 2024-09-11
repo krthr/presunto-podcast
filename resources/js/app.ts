@@ -1,8 +1,16 @@
-import 'vanilla-lazyload'
+/// <reference lib="dom" />
+
 import 'iconify-icon'
 
-console.log('Log from JS entrypoint')
+declare global {
+  interface Window {
+    LazyLoad: any
+    lazyContent: any
+  }
+}
 
-const lazyContent = new window.LazyLoad({
+window['lazyContent'] = new window['LazyLoad']({
   use_native: true, // <-- there you go
 })
+
+console.log('Log from JS entrypoint')
