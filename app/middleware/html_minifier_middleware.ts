@@ -17,8 +17,6 @@ export default class HtmlMinifierMiddleware {
       return
     }
 
-    console.log({ method, accepts, isXml })
-
     // get the minified HTML of our current response body
     const minifiedBody = minify(response.getBody(), {
       minifyCSS: true,
