@@ -1,8 +1,24 @@
 <div class="gap-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mb-10">
-  @each(episode in episodes)
+  @each((episode, index) in episodes)
   <div class="card card-bordered card-compact rounded-md w-full shadow-lg hover:shadow-xl bg-white">
     <figure>
-      <img class="lazy w-full aspect-square" src="{{ img(episode.image, { w: '5', blur: '10' }) }}" data-src="{{ img(episode.image, { w: '350' }) }}" />
+      <img 
+        class="{{
+          html.classNames([
+            'w-full aspect-square',
+            { 'lazy': index > 0 }
+          ])
+        }}"
+
+        @let(src = index > 0 ? img(episode.image, { w: '5', blur: '10' }) : img(episode.image, { w: '350' }))
+
+        {{
+          html.attrs({
+            'src': src,
+            'data-src': img(episode.image, { w: '350' })
+          })
+        }}
+      />
     </figure>
 
     <div class="card-body">
