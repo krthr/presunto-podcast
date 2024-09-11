@@ -2,7 +2,7 @@
   @each(episode in episodes)
   <div class="card card-bordered card-compact rounded-md w-full shadow-lg hover:shadow-xl bg-white">
     <figure>
-      <img class="w-full aspect-square" src="{{ episode.image }}" loading="lazy" />
+      <img class="w-full aspect-square" src="{{ img(episode.image) }}" loading="lazy" />
     </figure>
 
     <div class="card-body">

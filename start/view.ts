@@ -16,3 +16,9 @@ edge.global('humanDate', (value: number | DateTime) => {
     day: '2-digit',
   })
 })
+
+edge.global('img', (imgUrl: string, options = { quality: '70', pr: 'true' }) => {
+  const param = new URLSearchParams(options)
+  const url = new URL('https://ik.imagekit.io/krthr/' + imgUrl + '?' + param.toString())
+  return url.toString()
+})
