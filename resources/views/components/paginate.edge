@@ -1,0 +1,51 @@
+@if((prevPage || nextPage) && page && totalPages)
+<div class="w-full flex">
+  <div class="join mx-auto">
+    <a 
+      class="join-item btn"
+      {{ html.attrs({ disabled: !prevPage }) }}
+      @if(prevPage)
+        href="{{ 
+          route(
+            '/search', 
+            [], 
+            { 
+              qs: {
+                page: prevPage,
+                q: q
+              } 
+            }
+          ) 
+        }}"
+      @end
+    >
+      «
+    </a>
+    <button 
+      class="join-item btn disabled"
+    >
+      Página {{ page }} de {{ totalPages }}
+    </button>
+    <a 
+      class="join-item btn" 
+      {{ html.attrs({ disabled: !nextPage }) }}
+      @if(nextPage)
+        href="{{ 
+          route(
+            '/search', 
+            [], 
+            { 
+              qs: {
+                page: nextPage,
+                q: q
+              } 
+            }
+          ) 
+        }}"
+      @end
+    >
+      »
+    </a>
+  </div>
+</div>
+@end

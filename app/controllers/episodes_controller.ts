@@ -1,81 +1,35 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import type { MultiSearchRequestSchema } from 'typesense/lib/Typesense/MultiSearch.js'
 
 import { inject } from '@adonisjs/core'
 import logger from '@adonisjs/core/services/logger'
 
 import Episode from '#models/episode'
-import TypesenseService from '#services/typesense_service'
 
 import { searchEpisodesValidator } from '#validators/search'
+import SearchService from '#services/search_service'
 
 @inject()
 export default class EpisodesController {
-  constructor(protected typesenseService: TypesenseService) {}
+  constructor(protected searchService: SearchService) {}
 
-  async index({ session, view }: HttpContext) {
-    session.forget('q')
-
-    const episodes = await Episode.query()
-    return view.render('pages/index', { episodes })
-  }
-
-  async search({ request, response, session, view }: HttpContext) {
+  async search({ request, session, view }: HttpContext) {
     try {
       let { page, q } = await request.validateUsing(searchEpisodesValidator)
-
       if (!q) {
-        return response.redirect('/')
+        q = '*'
       }
 
-      const payload: MultiSearchRequestSchema = {
-        collection: 'episodes_2024_09_08_22_54',
-        q,
-        sort_by: '_text_match:desc,publishedAt:desc',
+      const results = await this.searchService.search(q, page)
+      if (q != '*') {
+        session.put('q', q)
+      } else {
+        session.forget('q')
       }
 
-      const { results } = await this.typesenseService.client.multiSearch.perform<
-        Pick<
-          Episode,
-          | 'id'
-          | 'acastEpisodeId'
-          | 'title'
-          | 'audioUrl'
-          | 'url'
-          | 'image'
-          | 'description'
-          | 'slug'
-          | 'publishedAt'
-          | 'transcriptionText'
-        >[]
-      >(
-        {
-          searches: [payload],
-        },
-        {
-          query_by: 'transcriptionText,title',
-          page,
-          per_page: 250,
-          highlight_affix_num_tokens: 10,
-        }
-      )
-
-      session.put('q', q)
-
-      const episodes = results.at(0)?.hits?.map(({ document, highlight }) => {
-        return {
-          ...document,
-          highlight,
-        }
-      })
-
-      const found = results.at(0)?.found || 0
-
-      return view.render('pages/search', { episodes, found })
+      return view.render('pages/search', results)
     } catch (error) {
       logger.error({ error })
-
-      return response.redirect('/')
+      return view.render('pages/search', {})
     }
   }
 
