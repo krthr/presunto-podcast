@@ -17,8 +17,17 @@ edge.global('humanDate', (value: number | DateTime) => {
   })
 })
 
-edge.global('img', (imgUrl: string, options = { quality: '70', pr: 'true' }) => {
-  const param = new URLSearchParams(options)
+edge.global('img', (imgUrl: string, options: Record<string, string> = {}) => {
+  const tr = Object.entries({
+    ...options,
+    quality: '80',
+    pr: 'true',
+  })
+    .map(([k, v]) => `${k}-${v}`)
+    .join(',')
+
+  const param = new URLSearchParams({ tr })
+
   const url = new URL('https://ik.imagekit.io/krthr/' + imgUrl + '?' + param.toString())
   return url.toString()
 })
