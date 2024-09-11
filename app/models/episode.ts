@@ -4,6 +4,7 @@ import { DateTime, Duration } from 'luxon'
 import { BaseModel, column, computed } from '@adonisjs/lucid/orm'
 
 import logger from '@adonisjs/core/services/logger'
+import { buildImageUrl } from '#utils/imagekit'
 
 export default class Episode extends BaseModel {
   @column({ isPrimary: true })
@@ -83,6 +84,19 @@ export default class Episode extends BaseModel {
           `${srtFormatTimestamp(timestamp[0])} --> ${srtFormatTimestamp(timestamp[1])}\t${text}`
       )
       .join('\n')
+  }
+
+  @computed()
+  get images() {
+    let url: string | undefined
+    let preview: string | undefined
+
+    if (this.image) {
+      url = buildImageUrl(this.image, { w: 400 })
+      preview = buildImageUrl(this.image, { w: 1, blur: 20 })
+    }
+
+    return { url, preview }
   }
 }
 

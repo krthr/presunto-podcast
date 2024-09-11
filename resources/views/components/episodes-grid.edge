@@ -10,12 +10,12 @@
           ])
         }}"
 
-        @let(src = index > 0 ? img(episode.image, { w: '5', blur: '10' }) : img(episode.image, { w: '350' }))
+        @let(src = index > 0 ? episode.images.preview : episode.images.url)
 
         {{
           html.attrs({
             'src': src,
-            'data-src': img(episode.image, { w: '350' })
+            'data-src': episode.images.url
           })
         }}
       />
