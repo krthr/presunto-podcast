@@ -3,7 +3,6 @@ import { MultiSearchRequestSchema } from 'typesense/lib/Typesense/MultiSearch.js
 
 import Episode from '#models/episode'
 import TypesenseService from '#services/typesense_service'
-import logger from '@adonisjs/core/services/logger'
 
 type SelectedFields = Pick<
   Episode,
