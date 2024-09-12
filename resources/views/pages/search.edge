@@ -1,42 +1,12 @@
 @layout.app({
   title: session.get('q') ? `Resultados para ${session.get('q')}` : 'Presunta Búsqueda'
 })
-  @header()
-  <h2 class="text-2xl mb-5 max-w-[600px]">
-    Explora los episodios de <br>
-    <a href="https://presunto.co/" class="font-bold underline decoration-wavy">Presunto Podcast</a>
-  </h2>
+  <div>
+    @!header()
+  </div>
 
-  <p class="text-sm">
-    {{--  <span>Puedes ver código de esta página web <a target="_blank" class="underline decoration-wavy" href="https://github.com/krthr/presunto-podcast">aquí</a>.</span>  --}}
-
-    {{--  <br>  --}}
-
-    <span class="inline-flex items-center">
-      <span>Hecho con</span>
-      <iconify-icon class="text-red-500 mx-2"  icon="ph:heart-fill" height=""></iconify-icon> 
-      <span>por</span> 
-      <a target="_blank" class="font-medium underline decoration-wavy ml-2" href="https://instagram.com/wilson__tovar">Wilson Tovar</a>.
-    </span>
-
-    <br>
-
-    <div class="space-x-2 mt-2">
-      <a target="_blank" href="https://github.com/krthr">
-        <iconify-icon icon="ph:github-logo" height=""></iconify-icon> 
-      </a>
-
-      <a target="_blank" href="https://instagram.com/wilson__tovar">
-        <iconify-icon icon="ph:instagram-logo" height=""></iconify-icon> 
-      </a>
-
-      <a target="_blank" href="https://linkedin.com/in/wilsontovar">
-        <iconify-icon icon="ph:linkedin-logo" height=""></iconify-icon> 
-      </a>
-    </div>
-  </p>
-  @end
-
-  @!component('components/episodes-grid', { episodes, totalPages, page, q, total })
-  @!component('components/paginate', { page, nextPage, prevPage, q, totalPages })
+  <div>
+    @!component('components/episodes-grid', { episodes, totalPages, page, q, total })
+    @!component('components/paginate', { page, nextPage, prevPage, q, totalPages })
+  </div>
 @end

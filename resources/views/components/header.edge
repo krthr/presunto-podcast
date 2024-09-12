@@ -1,11 +1,12 @@
-<div class="pt-10">
-  @if($slots.main())
-    {{{ await $slots.main() }}}
-  @else
-    @!logo()
-  @end
-  
-  @!component('components/search-form')
+<div class="flex justify-between flex-wrap items-center gap-2">
+  <a href="/">
+    <img class="m-auto w-24" src="{{ buildImageUrl('https://presunto.co/wp-content/uploads/2024/08/presuntosojis.gif', { w: 100 }) }}" alt="" />
+  </a>
 
-  <div class="divider"></div>
+  <div>
+    @!component('components/search-form')
+  </div>
+</div>
+
+<div class="divider">
 </div>

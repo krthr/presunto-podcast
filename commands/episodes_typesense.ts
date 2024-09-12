@@ -27,6 +27,7 @@ export default class EpisodesTypesense extends BaseCommand {
 
     await typesenseService.getOrCreateCollection({
       name: this.collectionName,
+      enable_nested_fields: true,
       fields: [
         {
           name: 'title',
@@ -60,6 +61,10 @@ export default class EpisodesTypesense extends BaseCommand {
           type: 'string',
         },
         {
+          name: 'acastShowId',
+          type: 'string',
+        },
+        {
           name: 'transcriptionText',
           type: 'string',
         },
@@ -67,6 +72,11 @@ export default class EpisodesTypesense extends BaseCommand {
           name: 'publishedAt',
           type: 'int64',
           sort: true,
+        },
+        {
+          name: 'images',
+          type: 'object',
+          index: false,
         },
       ],
       default_sorting_field: 'publishedAt',
@@ -77,8 +87,18 @@ export default class EpisodesTypesense extends BaseCommand {
     for (const episode of episodes) {
       logger.info(`indexing ${episode.title}`)
 
-      const { title, acastEpisodeId, audioUrl, url, image, description, slug, transcriptionText } =
-        episode
+      const {
+        title,
+        acastShowId,
+        acastEpisodeId,
+        audioUrl,
+        url,
+        image,
+        description,
+        slug,
+        transcriptionText,
+        images,
+      } = episode
 
       await typesenseService.index(this.collectionName, {
         id: acastEpisodeId,
@@ -91,6 +111,8 @@ export default class EpisodesTypesense extends BaseCommand {
         slug,
         transcriptionText,
         publishedAt: episode.publishedAt.toUnixInteger(),
+        acastShowId,
+        images,
       })
     }
   }

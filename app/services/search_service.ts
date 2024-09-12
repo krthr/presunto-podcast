@@ -17,6 +17,7 @@ type SelectedFields = Pick<
   | 'publishedAt'
   | 'transcriptionText'
   | 'images'
+  | 'acastShowId'
 >
 
 @inject()
@@ -29,7 +30,7 @@ export default class SearchService {
     }
 
     const payload: MultiSearchRequestSchema = {
-      collection: 'episodes_2024_09_11_18_09',
+      collection: 'episodes_2024_09_11_21_33',
       q,
       sort_by: '_text_match:desc,publishedAt:desc',
     }

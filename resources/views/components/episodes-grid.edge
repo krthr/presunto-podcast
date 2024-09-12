@@ -1,55 +1,62 @@
-@if(q !== '*' && q && page && totalPages)
-  <div class="w-full pb-6">
-    <h3>{{ total }} resultados para "<span class="font-bold">{{ q }}</span>". Página {{ page }} de {{ totalPages }}. </h3>
-  </div>
-@end
-
-<div class="gap-3 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xxl:grid-cols-6 mb-10">
-  @each((episode, index) in episodes)
-  <div class="card card-bordered card-compact rounded-md w-full shadow-lg hover:shadow-xl bg-white">
-    <figure>
-      <img 
-        class="{{
-          html.classNames([
-            'w-full aspect-square',
-            { 'lazy': index > 0 }
-          ])
-        }}"
-
-        @let(src = index > 0 ? episode.images?.preview : episode.images?.url)
-
-        {{
-          html.attrs({
-            'src': src,
-            'data-src': episode.images?.url
-          })
-        }}
-      />
-    </figure>
-
-    <div class="card-body">
-      <h3 class="card-title line-clamp-3 text-ellipsis text-xl hover:underline">
-        <a href="/{{ episode.slug }}">
-          {{ episode.title }}
-        </a>
-      </h3>
-
-      <p class="text-sm">
-        {{ humanDate(episode.publishedAt) }}
-      </p>
-
-      @if(episode.highlight?.transcriptionText)
-      <p class="line-clamp-4 italic">
-        [...] {{{ episode.highlight?.transcriptionText.snippet }}} [...]
-      </p>
-      @elseif(episode.description)
-      <div class="*:line-clamp-4 *:italic">
-        <div>
-          {{{ excerpt(episode.description, 300) }}}
-        </div>
-      </div>
-      @end
+<div>
+  @if(q !== '*' && q && page && totalPages)
+    <div class="w-full pb-6">
+      <h3>{{ total }} resultados para "<span class="font-bold">{{ q }}</span>". Página {{ page }} de {{ totalPages }}. </h3>
     </div>
-  </div>
   @end
+
+  <div class="gap-3 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xxl:grid-cols-4 mb-10">
+    @each((episode, index) in episodes)
+    <div class="card card-bordered card-compact w-full bg-white rounded-xl">
+      <a href="/{{ episode.slug }}">
+        <figure>
+          <img 
+            class="{{
+              html.classNames([
+                'w-full aspect-square',
+                { 'lazy': index > 0 }
+              ])
+            }}"
+  
+            @let(src = index > 0 ? episode.images?.preview : episode.images?.url)
+  
+            {{
+              html.attrs({
+                'src': src,
+                'data-src': episode.images?.url
+              })
+            }}
+          />
+        </figure>
+      </a>
+
+
+
+      <div class="card-body">
+        <h3 class="card-title line-clamp-3 text-ellipsis text-lg hover:underline">
+          <a href="/{{ episode.slug }}">
+            {{ episode.title }}
+          </a>
+        </h3>
+
+        <p class="text-sm">
+          {{ humanDate(episode.publishedAt) }}
+        </p>
+
+        @if(episode.highlight?.transcriptionText)
+        <p class="line-clamp-4 italic">
+          [...] {{{ episode.highlight?.transcriptionText.snippet }}} [...]
+        </p>
+        @elseif(episode.description)
+        <div class="*:line-clamp-4 *:italic">
+          <div>
+            {{{ excerpt(episode.description, 300) }}}
+          </div>
+        </div>
+        @end
+
+      </div>
+    </div>
+    @end
+  </div>
 </div>

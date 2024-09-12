@@ -12,6 +12,11 @@ import SearchService from '#services/search_service'
 export default class EpisodesController {
   constructor(protected searchService: SearchService) {}
 
+  async index({ session, view }: HttpContext) {
+    session.forget('q')
+    return view.render('pages/index')
+  }
+
   async search({ request, session, view }: HttpContext) {
     try {
       let { page, q } = await request.validateUsing(searchEpisodesValidator)
