@@ -12,6 +12,7 @@ const staticServerConfig = defineConfig({
   etag: true,
   lastModified: true,
   dotFiles: 'ignore',
+  cacheControl: true,
   maxAge: '1 month',
 })
 
