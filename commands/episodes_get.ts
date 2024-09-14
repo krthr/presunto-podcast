@@ -27,23 +27,27 @@ export default class EpisodesGet extends BaseCommand {
     }
 
     for (const item of items.slice(0, this.limit)) {
-      logger.info(item, `saving episode: ${item.title}`)
+      logger.info(`saving episode: ${item.title} acast_episodeId=${item.acast_episodeId}`)
 
-      await Episode.updateOrCreate(
-        {
-          acastEpisodeId: item.acast_episodeId,
-          acastShowId: item.acast_showId,
-        },
-        {
-          title: item.title,
-          audioUrl: item.enclosure.url,
-          image: item.itunes_image.href,
-          url: item.link,
-          publishedAt: item.pubDate,
-          slug: item.acast_episodeUrl || item.acast_episodeId,
-          description: item.description,
-        }
-      )
+      try {
+        await Episode.updateOrCreate(
+          {
+            acastEpisodeId: item.acast_episodeId,
+            acastShowId: item.acast_showId,
+          },
+          {
+            title: item.title,
+            audioUrl: item.enclosure.url,
+            image: item.itunes_image.href,
+            url: item.link,
+            publishedAt: item.pubDate,
+            slug: item.acast_episodeUrl || item.acast_episodeId,
+            description: item.description,
+          }
+        )
+      } catch (error) {
+        logger.error(error, `${item.title} acast_episodeId=${item.acast_episodeId}`)
+      }
     }
   }
 }

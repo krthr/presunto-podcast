@@ -18,8 +18,8 @@ const itemsValidator = vine.array(
       })
       .optional(),
     title: vine.any().transform((v: unknown) => {
-      if (typeof v === 'string') {
-        return v
+      if (typeof v === 'string' || typeof v === 'number') {
+        return v.toString()
       }
     }),
     pubDate: vine.string().transform((value) => DateTime.fromJSDate(new Date(value))),
