@@ -46,10 +46,13 @@ export default class EpisodesProcess extends BaseCommand {
       .filter((r) => r.endsWith('.mp3'))
       .map((r) => r.replace('.mp3', ''))
 
-    const episodes = await Episode.query().whereIn('acastEpisodeId', audiosFiles).limit(this.limit)
+    const episodesWithoutTranscription = await Episode.query()
+      .whereIn('acastEpisodeId', audiosFiles)
+      .andWhereNull('transcriptionText')
+      .limit(this.limit)
 
-    while (episodes.length) {
-      const chunks = episodes.splice(0, this.transcribeConcurrency)
+    while (episodesWithoutTranscription.length) {
+      const chunks = episodesWithoutTranscription.splice(0, this.transcribeConcurrency)
 
       const promises = chunks.map((episode) =>
         ace.exec('episodes:transcribe', ['--acast-episode-id', episode.acastEpisodeId.toString()])
