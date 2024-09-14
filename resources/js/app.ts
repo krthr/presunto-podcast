@@ -1,5 +1,7 @@
 /// <reference lib="dom" />
+/// <reference types="vite/client" />
 
+import.meta.glob(['../images/**'])
 import 'iconify-icon'
 
 declare global {
