@@ -8,8 +8,6 @@ import logger from '@adonisjs/core/services/logger'
 import TypesenseService from '#services/typesense_service'
 import Episode from '#models/episode'
 
-const DEFAULT_COLLECTION_NAME = 'episodes'
-
 export default class EpisodesTypesense extends BaseCommand {
   static commandName = 'episodes:typesense'
   static description = ''
@@ -18,7 +16,7 @@ export default class EpisodesTypesense extends BaseCommand {
     startApp: true,
   }
 
-  @flags.string({ default: DEFAULT_COLLECTION_NAME })
+  @flags.string()
   declare collectionName: string
 
   @inject()

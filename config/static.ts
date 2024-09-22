@@ -13,7 +13,7 @@ const staticServerConfig = defineConfig({
   lastModified: true,
   dotFiles: 'ignore',
   cacheControl: true,
-  maxAge: '1 month',
+  maxAge: '24 hours',
 })
 
 export default staticServerConfig
